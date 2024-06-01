@@ -172,7 +172,7 @@ async def mycheck_and(*check_funcs: Callable[..., Awaitable[bool]]) -> Callable[
 '''
 Confined Timeout Module
 '''
-class ModuleRetr0initConfinedTimeout(interactions.Extension):
+class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     module_base: interactions.SlashCommand = interactions.SlashCommand(
         name="global_timeout",
         description="Confined timeout"
