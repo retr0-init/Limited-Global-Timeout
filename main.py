@@ -879,9 +879,11 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     async def module_group_setting_viewSummary(self, ctx: interactions.SlashContext) -> None:
         channel_config: Config = global_settings[SettingType.LOG_CHANNEL]
         minute_config: Config = global_settings[SettingType.MINUTE_LIMIT]
+        step_config: Config = global_settings[SettingType.MINUTE_STEP]
         config_msg: str = "Log channel is "
         config_msg += "not set!" if str(ctx.guild.id) != channel_config.setting1 else ctx.guild.get_channel(int(channel_config.setting)).mention
         config_msg += f"\nTimeout Limit is `{minute_config.setting} minutes`\n"
+        config_msg += f"\nTimeout Step is `{step_config.setting} minutes`\n"
         msg: str = config_msg + "\nGlobal Admins:\n"
         for i in global_admins:
             if i.type == MRCTType.USER:
@@ -905,7 +907,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             timeleft: datetime.timedelta = i.release_datetime.replace(tzinfo=None) - datetime.datetime.now()
             timestring: str = f"{timeleft.total_seconds() / 60:.2f} minutes"
             msg += f"- {ctx.guild.get_member(i.id).mention} `{timestring} left`\n"
-        pag: Paginator = Paginator.create_from_string(self.bot, f"Summary for Confined Timeout:\n\n{msg}", page_size=1000)
+        pag: Paginator = Paginator.create_from_string(self.bot, f"Summary for Limited Global Timeout:\n\n{msg}", page_size=1000)
         await pag.send(ctx)
     
     @module_base.subcommand("timeout", sub_cmd_description="Timeout a member in this channel")
@@ -930,10 +932,10 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
 
     @module_base_timeout.autocomplete("minutes")
     async def autocomplete_timeout_minutes(self, ctx: interactions.AutocompleteContext) -> None:
+        choices: list[int] = [i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)]
+        print(choices)
         await ctx.send(
-            choices=[
-                i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)
-            ]
+            choices=choices[:24]
         )
     
     async def cmd_timeout(self, ctx: interactions.ContextMenuContext, is_msg: bool):
