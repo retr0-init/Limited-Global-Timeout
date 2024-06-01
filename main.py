@@ -174,7 +174,7 @@ Confined Timeout Module
 '''
 class ModuleRetr0initConfinedTimeout(interactions.Extension):
     module_base: interactions.SlashCommand = interactions.SlashCommand(
-        name="confined_timeout",
+        name="global_timeout",
         description="Confined timeout"
     )
     module_group_setting: interactions.SlashCommand = module_base.group(
