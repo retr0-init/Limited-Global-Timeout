@@ -111,11 +111,11 @@ class Config:
     def sortList(setting_list: list[Self]) -> None:
         setting_list.sort(key=lambda a:a.type)
 
-GLOBAL_ADMIN_USER_CUSTOM_ID: str = "retr0init_confined_timeout_GlobalAdmin_user"
-GLOBAL_ADMIN_ROLE_CUSTOM_ID: str = "retr0init_confined_timeout_GlobalAdmin_role"
-GLOBAL_MODERATOR_USER_CUSTOM_ID: str = "retr0init_confined_timeout_GlobalModerator_user"
-GLOBAL_MODERATOR_ROLE_CUSTOM_ID: str = "retr0init_confined_timeout_GlobalModerator_role"
-TIMEOUT_DIALOG_CUSTOM_ID: str = "retr0init_confined_timeout_TimeoutDialog"
+GLOBAL_ADMIN_USER_CUSTOM_ID: str = "retr0init_limited_global_timeout_GlobalAdmin_user"
+GLOBAL_ADMIN_ROLE_CUSTOM_ID: str = "retr0init_limited_global_timeout_GlobalAdmin_role"
+GLOBAL_MODERATOR_USER_CUSTOM_ID: str = "retr0init_limited_global_timeout_GlobalModerator_user"
+GLOBAL_MODERATOR_ROLE_CUSTOM_ID: str = "retr0init_limited_global_timeout_GlobalModerator_role"
+TIMEOUT_DIALOG_CUSTOM_ID: str = "retr0init_limited_global_timeout_TimeoutDialog"
 
 global_admins: list[GlobalAdmin] = []
 global_moderators: list[GlobalModerator] = []
@@ -175,7 +175,7 @@ Confined Timeout Module
 class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     module_base: interactions.SlashCommand = interactions.SlashCommand(
         name="global_timeout",
-        description="Confined timeout"
+        description="Global Limited timeout"
     )
     module_group_setting: interactions.SlashCommand = module_base.group(
         name="setting",
