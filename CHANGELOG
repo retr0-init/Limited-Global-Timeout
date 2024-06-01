@@ -2,4 +2,6 @@
 - Modified sources from Confined Timeout DRAFT
 
 # 20240601
-- Fix the base command name
+- Fix:
+    - base command name
+    - moderator database class parameter

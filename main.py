@@ -138,11 +138,9 @@ async def my_global_moderator_check(ctx: interactions.BaseContext) -> bool:
     '''
     Check whether the member has the channel moderator permission to run the command
     '''
-    channel_id: int = ctx.channel.id if not hasattr(ctx.channel, "parent_channel") else ctx.channel.parent_channel.id
     cmod_user: GlobalModerator = GlobalModerator(
         ctx.author.id,
         MRCTType.USER,
-        channel_id
     )
     res_user: bool = cmod_user in global_moderators
     res_role: bool = any(map(
