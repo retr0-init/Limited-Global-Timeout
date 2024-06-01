@@ -211,6 +211,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         for gs in gss:
             Config(gs[0].type, gs[0].setting, gs[0].setting1).upsert(global_settings)
         await self.async_start()
+        self.minute_choices = [i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)]
 
     async def async_start(self) -> None:
         if self.startup_flag:
@@ -956,6 +957,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             choices: list[int] = self.minute_choices
         else:
             choices: list[int] = [i for i in self.minute_choices if value <= i or str(value) in i]
+        print(ctx.input_text, value, choices)
         await ctx.send(
             choices=choices[:24]
         )
