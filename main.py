@@ -957,7 +957,6 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             choices: list[int] = self.minute_choices
         else:
             choices: list[int] = [i for i in self.minute_choices if value <= i or str(value) in i]
-        print(ctx.input_text, value, choices)
         await ctx.send(
             choices=choices[:24]
         )
@@ -968,14 +967,23 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         ctx: ContextMenuContext Interactions Context Menu Context
         is_msg: bool            Whether this is used for message context menu
         """
+        raise NotImplementedError("This is still in construction. Please use slash command instead!")
         if is_msg:
             msg: interactions.Message = ctx.target
             user: interactions.Member = msg.author
         else:
             user: interactions.Member = ctx.target
         __t_func = lambda x, y: x if len(x) < y else f"{x[:y-3]}..."
+        all_choices: list[str] = [str(i * global_settings[SettingType.MINUTE_STEP].setting) for i in range(1, int(global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1))]
+        choices_list: list[list[str]] = []
+        c_temp: list[str] = []
+        for _, __ in enumerate(all_choices, 1):
+            c_temp.append(__)
+            if _ % 25 == 0 or _ == len(all_choices):
+                choices_list.append(c_temp)
+                c_temp = []
         select_menu: interactions.StringSelectMenu = interactions.StringSelectMenu(
-            *(str(i * global_settings[SettingType.MINUTE_STEP].setting) for i in range(1, int(global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1))),
+            *(),
             placeholder="Select the minute to timeout",
             min_values=1, max_values=1
         )
