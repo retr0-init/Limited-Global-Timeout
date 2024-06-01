@@ -86,7 +86,7 @@ class Prisoner:
     id: int
     release_datetime: datetime.datetime
     def to_tuple(self) -> tuple:
-        return (self.id, self.channel_id)
+        return (self.id)
 
 @dataclass
 class Config:
@@ -268,7 +268,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
                 await session.commit()
 
     async def release_prinsoner(self, prisoner: Prisoner, ctx: interactions.BaseContext = None) -> None:
-        if not any(i.id == prisoner.id and i.channel_id == prisoner.channel_id for i in prisoners):
+        if not any(i.id == prisoner.id for i in prisoners):
             if ctx is not None:
                 await ctx.send("This member is not prisoned!", ephemeral=True)
             return
@@ -606,7 +606,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
                     max_values=25,
                     default_values=[ctx.guild.get_member(_.id) for _ in global_moderators if _.type == MRCTType.USER]
                 )
-                await ctx.send(f"Set the `{ctx.channel.name}` moderator USER:", components=[component_user], ephemeral=True)
+                await ctx.send(f"Set the moderator USER:", components=[component_user], ephemeral=True)
             case MRCTType.ROLE:
                 component_role: interactions.RoleSelectMenu = interactions.RoleSelectMenu(
                     custom_id=GLOBAL_MODERATOR_ROLE_CUSTOM_ID,
