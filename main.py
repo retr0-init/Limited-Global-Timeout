@@ -183,6 +183,8 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     startup_flag: bool = False
     # asyncio locks
     lock_db: asyncio.Lock = asyncio.Lock()
+    # minute autocomplete choices
+    minute_choices: list[int] = []
 
     ################ Initial functions STARTS ################
 
@@ -447,7 +449,15 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         """
         Set the upper limit of timeout duration in minutes
         """
+        if minute <= 0:
+            await ctx.send("The minute limit cannot be less than or equal to 0!", ephemeral=True)
+            return
+        step_minute: int = global_settings[SettingType.MINUTE_STEP].setting
+        if minute < step_minute:
+            await ctx.send(f"The limit cannot be less than the minute step `{step_minute} minutes`!", ephemeral=True)
+            return
         await self.update_global_setting(SettingType.MINUTE_LIMIT, minute)
+        self.minute_choices = [i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)]
         await ctx.send(f"Timeout Upper Limit is {minute} minutes!")
         await self.send_log_channel(f"Timeout Upper Limit is {minute} minutes!")
 
@@ -460,11 +470,19 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         min_value=1
     )
     @interactions.check(my_admin_check)
-    async def module_group_setting_setLimit(self, ctx: interactions.SlashContext, minute: int) -> None:
+    async def module_group_setting_setStep(self, ctx: interactions.SlashContext, minute: int) -> None:
         """
         Set the step of timeout duration in minutes
         """
+        if minute <= 0:
+            await ctx.send("The minute step cannot be less than or equal to 0!", ephemeral=True)
+            return
+        limit_minute: int = global_settings[SettingType.MINUTE_LIMIT].setting
+        if minute > limit_minute:
+            await ctx.send(f"The step cannot be greater than the minute limit `{limit_minute} minutes`!", ephemeral=True)
+            return
         await self.update_global_setting(SettingType.MINUTE_STEP, minute)
+        self.minute_choices = [i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)]
         await ctx.send(f"Timeout step is {minute} minutes!")
         await self.send_log_channel(f"Timeout step is {minute} minutes!")
 
@@ -932,8 +950,12 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
 
     @module_base_timeout.autocomplete("minutes")
     async def autocomplete_timeout_minutes(self, ctx: interactions.AutocompleteContext) -> None:
-        choices: list[int] = [i * global_settings[SettingType.MINUTE_STEP].setting for i in range(1, global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1)]
-        print(choices)
+        try:
+            value: int = int(ctx.input_text)
+        except ValueError:
+            choices: list[int] = self.minute_choices
+        else:
+            choices: list[int] = [i for i in self.minute_choices if value <= i or str(value) in i]
         await ctx.send(
             choices=choices[:24]
         )
