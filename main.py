@@ -272,7 +272,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             if ctx is not None:
                 await ctx.send("This member is not prisoned!", ephemeral=True)
             return
-        user: interactions.Member = await self.bot.fetch_user(prisoner.id)
+        user: interactions.Member = await self.bot.fetch_member(prisoner.id, self.bot.guilds[0])
         try:
             await user.timeout(None, "Limited Global Timeout Release prisoner")
         except interactions.errors.Forbidden:
