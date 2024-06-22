@@ -377,8 +377,6 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
                 await session.commit()
         if ctx is not None:
             await ctx.send(f"{prisoner_member.mention} is jailed for {duration_minutes} minutes in all channels. Reason: {'None' if len(reason) == 0 else reason[:50]+'...' if len(reason) > 51 else reason}", silent=True)
-        else:
-            await channel.send(f"{prisoner_member.mention} is jailed for {duration_minutes} minutes in all channels. Reason: {'None' if len(reason) == 0 else reason[:50]+'...' if len(reason) > 51 else reason}", silent=True)
         await self.send_log_channel(f"{prisoner_member.mention} is jailed for {duration_minutes} minutes in all channels. Reason: {'None' if len(reason) == 0 else reason[:50]+'...' if len(reason) > 51 else reason}", int("FFFF80", 16))
         # Wait for a certain number of time and unblock the member
         task = asyncio.create_task(self.release_prisoner_task(duration_minutes=duration_minutes, prisoner=prisoner, ctx=ctx))
