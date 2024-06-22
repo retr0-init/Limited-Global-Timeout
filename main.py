@@ -989,7 +989,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             return
         minutes = round(minutes / global_settings[SettingType.MINUTE_STEP].setting) * global_settings[SettingType.MINUTE_STEP].setting
         minutes = minutes if minutes != 0 else global_settings[SettingType.MINUTE_STEP].setting
-        success: bool = await self.jail_prisoner(user, minutes, ctx=sm_ctx.ctx, reason=msg.content if is_msg else "")
+        success: bool = await self.jail_prisoner(user, minutes, ctx=modal_ctx, reason=msg.content if is_msg else "")
 
     @interactions.user_context_menu("Global Timeout User")
     @interactions.check(my_global_moderator_check)
