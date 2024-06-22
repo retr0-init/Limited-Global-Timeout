@@ -1,5 +1,5 @@
-- [中文](#受限的禁言)
-- [English](#confined-timeout)
+- [中文](#受限的全局禁言)
+- [English](#limited-global-timeout)
 
 # 受限的全局禁言
 允许特定成员或者身份组可以在服务器中禁言成员。然而其可以禁言的上限和间隔受到了限制。
@@ -35,7 +35,7 @@
     - 用户菜单
 - `/global_timeout view_prisoners`
 
-# Confined Timeout
+# Limited Global Timeout
 It allows certain members or roles able to timeout a member in the entire guild given there is a timeout upper limit and step size.
 
 ## Implementation
