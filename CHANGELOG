@@ -14,3 +14,6 @@
 - Remove NotImplementError line
 - Check the minute at first
 - Get around the negative time issue
+- Remove the warning of the library code modification
+- Update `README.md`
+- Check whether the member is in the guild

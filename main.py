@@ -1,5 +1,5 @@
 '''
-Confined Timeout
+Limited Global Timeout
 Main entry point.
 [WARNING] Modify the original library code: https://github.com/interactions-py/interactions.py/pull/1654
 
@@ -18,7 +18,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
-#WARNING Modify the original library code: https://github.com/interactions-py/interactions.py/pull/1654
 import interactions
 from interactions.ext.paginators import Paginator
 from interactions.api.events import MemberAdd, MemberRemove
@@ -396,6 +395,8 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
                 await ctx.channel.send(f"{user.mention} is released!", silent=True)
         except asyncio.CancelledError:
             pass
+        except AttributeError:
+            pass
 
     async def send_log_channel(self, message: str, colour: int = 0) -> None:
         channel_config: Config = global_settings[SettingType.LOG_CHANNEL]
@@ -427,9 +428,8 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         for cp in cps:
             duration_minutes: int = (cp.release_datetime.replace(tzinfo=None) - cdt).total_seconds() / 60
             duration_minutes = math.ceil(duration_minutes) if duration_minutes > 0 else 1
-            channel: interactions.GuildChannel = await event.guild.fetch_channel(cp.channel_id)
             await self.release_prinsoner(cp)
-            await self.jail_prisoner(event.member, duration_minutes, channel, reason="Re-jail escaped member")
+            await self.jail_prisoner(event.member, duration_minutes, reason="Re-jail escaped member")
 
     ################ Eventsl functions STARTS ################
 
@@ -973,6 +973,9 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             user: interactions.Member = msg.author
         else:
             user: interactions.Member = ctx.target
+        if ctx.guild.get_member(user.id) is None:
+            await ctx.send("This member has left the guild. Cannot operate!", ephemeral=True)
+            return
         __t_func = lambda x, y: x if len(x) < y else f"{x[:y-3]}..."
         modal: interactions.Modal = interactions.Modal(
             interactions.ShortText(
@@ -1063,4 +1066,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     @interactions.user_context_menu("Global Release")
     @interactions.check(my_global_moderator_check)
     async def contextmenu_usr_release(self, ctx: interactions.ContextMenuContext) -> None:
-        await self.cmd_release(ctx, is_cmd=False, user=ctx.target.id)
+        try:
+            await self.cmd_release(ctx, is_cmd=False, user=ctx.target.id)
+        except AttributeError:
+            await ctx.send("This member already left the guild. Wait until thy's back!", ephemeral=True)
