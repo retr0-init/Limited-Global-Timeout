@@ -967,7 +967,6 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         ctx: ContextMenuContext Interactions Context Menu Context
         is_msg: bool            Whether this is used for message context menu
         """
-        raise NotImplementedError("This is still in construction. Please use slash command instead!")
         if is_msg:
             msg: interactions.Message = ctx.target
             user: interactions.Member = msg.author
