@@ -974,28 +974,23 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         else:
             user: interactions.Member = ctx.target
         __t_func = lambda x, y: x if len(x) < y else f"{x[:y-3]}..."
-        all_choices: list[str] = [str(i * global_settings[SettingType.MINUTE_STEP].setting) for i in range(1, int(global_settings[SettingType.MINUTE_LIMIT].setting // global_settings[SettingType.MINUTE_STEP].setting + 1))]
-        choices_list: list[list[str]] = []
-        c_temp: list[str] = []
-        for _, __ in enumerate(all_choices, 1):
-            c_temp.append(__)
-            if _ % 25 == 0 or _ == len(all_choices):
-                choices_list.append(c_temp)
-                c_temp = []
-        select_menu: interactions.StringSelectMenu = interactions.StringSelectMenu(
-            *(),
-            placeholder="Select the minute to timeout",
-            min_values=1, max_values=1
+        modal: interactions.Modal = interactions.Modal(
+            interactions.ShortText(
+                label="Minutes to timeout",
+                placeholder=f"Rounded every {global_settings[SettingType.MINUTE_STEP]} & Capped to {global_settings[SettingType.MINUTE_LIMIT]}"),
+            title=f"Globally Timeout {__t_func(user.display_name, 20)}"
         )
-        await ctx.send(components=[select_menu], ephemeral=True)
-        sm_ctx: interactions.events.Component = await ctx.bot.wait_for_component(components=select_menu)
-        short_text: str = sm_ctx.ctx.values[0]
+        await ctx.send_modal(modal=modal)
+        modal_ctx: interactions.ModalContext = await ctx.bot.wait_for_modal(modal=modal)
+        short_text: str = modal_ctx.responses[modal.components[0].custom_id]
         try:
             minutes: int = int(short_text)
         except ValueError:
-            await sm_ctx.ctx.edit_origin(content="The input is not integer!", components=None)
+            await modal_ctx.send("The input is not integer!", ephemeral=True)
             return
-        success: bool = await self.jail_prisoner(user, minutes, channel, ctx=sm_ctx.ctx, reason=msg.content if is_msg else "")
+        minutes = round(minutes / global_settings[SettingType.MINUTE_STEP].setting) * global_settings[SettingType.MINUTE_STEP].setting
+        minutes = minutes if minutes != 0 else global_settings[SettingType.MINUTE_STEP].setting
+        success: bool = await self.jail_prisoner(user, minutes, ctx=sm_ctx.ctx, reason=msg.content if is_msg else "")
 
     @interactions.user_context_menu("Global Timeout User")
     @interactions.check(my_global_moderator_check)
