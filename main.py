@@ -976,7 +976,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         modal: interactions.Modal = interactions.Modal(
             interactions.ShortText(
                 label="Minutes to timeout",
-                placeholder=f"Rounded every {global_settings[SettingType.MINUTE_STEP]} & Capped to {global_settings[SettingType.MINUTE_LIMIT]}"),
+                placeholder=__t_func(f"Rounded every {global_settings[SettingType.MINUTE_STEP].setting} & Capped to {global_settings[SettingType.MINUTE_LIMIT].setting}", 99)),
             title=f"Globally Timeout {__t_func(user.display_name, 20)}"
         )
         await ctx.send_modal(modal=modal)
