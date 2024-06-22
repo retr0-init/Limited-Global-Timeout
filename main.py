@@ -313,6 +313,14 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
         return len(cp) > 0, prisoner
 
     async def jail_prisoner(self, prisoner_member: interactions.Member, duration_minutes: int, ctx: interactions.SlashContext = None, reason: str = "") -> bool:
+        # Test whether the jail duration is above the upper limit
+        minute_limit: int = global_settings[SettingType.MINUTE_LIMIT].setting
+        if duration_minutes > minute_limit:
+            duration_minutes = minute_limit
+            # if ctx is not None:
+            #     await ctx.send(f"You cannot jail a member over {minute_limit} minutes!", ephemeral=True)
+            # return False
+
         # Do not double jail existing prisoners
         existed, prisoner = self.check_prisoner(prisoner_member, duration_minutes)
         if existed:
@@ -349,14 +357,6 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             if ctx is not None:
                 await ctx.send("You cannot jail global admin!", ephemeral=True)
             return False
-
-        # Test whether the jail duration is above the upper limit
-        minute_limit: int = global_settings[SettingType.MINUTE_LIMIT].setting
-        if duration_minutes > minute_limit:
-            duration_minutes = minute_limit
-            # if ctx is not None:
-            #     await ctx.send(f"You cannot jail a member over {minute_limit} minutes!", ephemeral=True)
-            # return False
 
         # Timeout a member
         try:
@@ -945,6 +945,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
     )
     @interactions.check(my_global_moderator_check)
     async def module_base_timeout(self, ctx: interactions.SlashContext, user: interactions.User, minutes: int) -> None:
+        minutes = minutes if minutes > 0 else global_settings[SettingType.MINUTE_STEP].setting
         minutes = math.ceil(minutes / global_settings[SettingType.MINUTE_STEP].setting) * global_settings[SettingType.MINUTE_STEP].setting
         minutes = minutes if minutes <= global_settings[SettingType.MINUTE_LIMIT].setting else global_settings[SettingType.MINUTE_LIMIT].setting
         success: bool = await self.jail_prisoner(user, minutes, ctx=ctx)
@@ -988,7 +989,7 @@ class ModuleRetr0initLimitedGlobalTimeout(interactions.Extension):
             await modal_ctx.send("The input is not integer!", ephemeral=True)
             return
         minutes = round(minutes / global_settings[SettingType.MINUTE_STEP].setting) * global_settings[SettingType.MINUTE_STEP].setting
-        minutes = minutes if minutes != 0 else global_settings[SettingType.MINUTE_STEP].setting
+        minutes = minutes if minutes > 0 else global_settings[SettingType.MINUTE_STEP].setting
         success: bool = await self.jail_prisoner(user, minutes, ctx=modal_ctx, reason=msg.content if is_msg else "")
 
     @interactions.user_context_menu("Global Timeout User")

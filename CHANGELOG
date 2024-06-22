@@ -12,3 +12,5 @@
 # 20240622
 - Timeout Context Menu pop modal now
 - Remove NotImplementError line
+- Check the minute at first
+- Get around the negative time issue
